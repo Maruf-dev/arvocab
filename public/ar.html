@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>AR Vocabulary Card</title>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <style>
+    * { margin: 0; padding: 0; }
+    body { overflow: hidden; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+    /* Loading screen */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.6s ease;
+    }
+    #loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #loading-screen h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: #6c63ff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Instruction overlay */
+    #instruction-overlay {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      z-index: 50;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+      text-align: center;
+      white-space: nowrap;
+    }
+    #instruction-overlay.hidden { opacity: 0; pointer-events: none; }
+
+    /* Word card overlay */
+    #word-card {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      width: 90%;
+      max-width: 380px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 24px 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+      text-align: center;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    #word-card.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    #word-card h2 {
+      margin: 0 0 4px 0;
+      font-size: 1.6rem;
+      color: #1a1a2e;
+      font-weight: 700;
+    }
+    #word-card .phonetic {
+      font-style: italic;
+      color: #6c63ff;
+      margin: 0 0 10px 0;
+      font-size: 1rem;
+    }
+    #word-card .sentence {
+      color: #555;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 0 0 16px 0;
+    }
+    #pronounce-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #6c63ff, #4834d4);
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+    }
+    #pronounce-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(108, 99, 255, 0.5);
+    }
+    #pronounce-btn:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading -->
+  <div id="loading-screen">
+    <h1>Initializing AR…</h1>
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Instruction -->
+  <div id="instruction-overlay">📷 Point camera at a <b>Hiro</b> marker</div>
+
+  <!-- Word card (populated by JS from words.json) -->
+  <div id="word-card">
+    <h2 id="card-word"></h2>
+    <p class="phonetic" id="card-phonetic"></p>
+    <p class="sentence" id="card-sentence"></p>
+    <button id="pronounce-btn" onclick="playAudio()">🔊 Pronounce</button>
+  </div>
+
+  <!-- A-Frame AR Scene -->
+  <a-scene
+    embedded
+    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+    renderer="logarithmicDepthBuffer: true; colorManagement: true;"
+    vr-mode-ui="enabled: false"
+  >
+    <a-assets>
+      <a-asset-item id="model-asset" src=""></a-asset-item>
+    </a-assets>
+
+    <a-marker preset="hiro" id="ar-marker">
+      <a-entity
+        id="ar-model"
+        gltf-model="#model-asset"
+        scale="5 5 5"
+        position="0 0.5 0"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear;"
+        animation__float="property: position; from: 0 0.4 0; to: 0 0.7 0; loop: true; dir: alternate; dur: 2000; easing: easeInOutSine;"
+      ></a-entity>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    let wordData = null;
+    let audioEl = null;
+
+    // Load word data from static JSON
+    fetch('/data/words.json')
+      .then(r => r.json())
+      .then(data => {
+        wordData = data[0];
+        // Populate card
+        document.getElementById('card-word').textContent = wordData.word;
+        document.getElementById('card-phonetic').textContent = wordData.phonetic;
+        document.getElementById('card-sentence').textContent = wordData.sentence;
+        // Set 3D model
+        document.getElementById('model-asset').setAttribute('src', wordData.model);
+      })
+      .catch(err => console.error('Failed to load words.json', err));
+
+    function playAudio() {
+      if (!wordData) return;
+      if (!audioEl) {
+        audioEl = new Audio(wordData.audio);
+      }
+      audioEl.currentTime = 0;
+      audioEl.play().catch(e => console.warn('Audio play error:', e));
+    }
+
+    // Hide loading screen once scene is ready
+    const scene = document.querySelector('a-scene');
+    scene.addEventListener('loaded', () => {
+      setTimeout(() => {
+        document.getElementById('loading-screen').classList.add('hidden');
+      }, 800);
+    });
+
+    // Monitor marker visibility
+    const marker = document.getElementById('ar-marker');
+    const card = document.getElementById('word-card');
+    const instruction = document.getElementById('instruction-overlay');
+
+    marker.addEventListener('markerFound', () => {
+      card.classList.add('visible');
+      instruction.classList.add('hidden');
+    });
+
+    marker.addEventListener('markerLost', () => {
+      card.classList.remove('visible');
+      instruction.classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+[
+    {
+        "id": 1,
+        "word": "Apple",
+        "phonetic": "/ˈæp.əl/",
+        "sentence": "I eat an apple every day.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
+    }
+]
