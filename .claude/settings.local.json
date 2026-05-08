@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\user\\\\Desktop\\\\arvocab\" -Depth 2 | Format-Table -Property Name, @{Name=\"Type\";Expression={if\\($_.PSIsContainer\\){\"Dir\"}else{\"File\"}}} -AutoSize)",
+      "Bash(npm run *)"
+    ]
+  }
+}

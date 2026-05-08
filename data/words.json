@@ -6,5 +6,77 @@
         "sentence": "I eat an apple every day.",
         "audio": "/audio/apple.mp3",
         "model": "/models/apple.glb"
+    },
+    {
+        "id": 2,
+        "word": "Banana",
+        "phonetic": "/bəˈnɑː.nə/",
+        "sentence": "She peeled a banana for breakfast.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
+    },
+    {
+        "id": 3,
+        "word": "Book",
+        "phonetic": "/bʊk/",
+        "sentence": "He read a book before going to sleep.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
+    },
+    {
+        "id": 4,
+        "word": "Cat",
+        "phonetic": "/kæt/",
+        "sentence": "The cat sat on the warm windowsill.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
+    },
+    {
+        "id": 5,
+        "word": "Dog",
+        "phonetic": "/dɒɡ/",
+        "sentence": "The dog wagged its tail happily.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
+    },
+    {
+        "id": 6,
+        "word": "Elephant",
+        "phonetic": "/ˈel.ɪ.fənt/",
+        "sentence": "The elephant splashed water with its trunk.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
+    },
+    {
+        "id": 7,
+        "word": "Flower",
+        "phonetic": "/ˈflaʊ.ər/",
+        "sentence": "She picked a flower from the garden.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
+    },
+    {
+        "id": 8,
+        "word": "Globe",
+        "phonetic": "/ɡloʊb/",
+        "sentence": "He spun the globe and pointed to a country.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
+    },
+    {
+        "id": 9,
+        "word": "House",
+        "phonetic": "/haʊs/",
+        "sentence": "They painted their house bright yellow.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
+    },
+    {
+        "id": 10,
+        "word": "Island",
+        "phonetic": "/ˈaɪ.lənd/",
+        "sentence": "The island was surrounded by crystal-clear water.",
+        "audio": "/audio/apple.mp3",
+        "model": "/models/apple.glb"
     }
 ]
